@@ -1,21 +1,30 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../api/services";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (email === "admin@gmail.com" && password === "123456") {
+    setError("");
+    setLoading(true);
+    try {
+      await loginUser({
+        EmailAddress: email.trim(),
+        UserPassword: password,
+      });
       localStorage.setItem("isLoggedIn", "true");
       navigate("/dashboard");
-    } else {
-      setError("Invalid email or password");
+    } catch (err) {
+      setError(err?.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,8 +56,11 @@ export default function Login() {
           className="p-3 rounded-xl bg-white/40 backdrop-blur-sm border border-white/20 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all duration-300 placeholder-purple-500"
         />
 
-        <button className="bg-linear-to-r from-purple-400 to-pink-500 text-white font-bold p-3 rounded-2xl hover:from-purple-500 hover:to-pink-600 shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:scale-105">
-          Login
+        <button
+          disabled={loading}
+          className="bg-linear-to-r from-purple-400 to-pink-500 text-white font-bold p-3 rounded-2xl hover:from-purple-500 hover:to-pink-600 shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed"
+        >
+          {loading ? "Logging in..." : "Login"}
         </button>
       </form>
     </div>

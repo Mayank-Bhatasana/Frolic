@@ -1,10 +1,11 @@
-import { useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Navbar from "../components/layout/Navbar";
 import Sidebar from "../components/layout/Sidebar";
 import Table from "../components/common/Table";
 import Modal from "../components/common/Modal";
 import Input from "../components/common/Input";
 import Button from "../components/common/Button";
+import { getInstitutes } from "../api/services";
 
 export default function Institutes() {
   const nextId = useRef(3);
@@ -18,6 +19,26 @@ export default function Institutes() {
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [editId, setEditId] = useState(null);
+
+  useEffect(() => {
+    const fetchInstitutes = async () => {
+      try {
+        const response = await getInstitutes();
+        const fetchedInstitutes = (response.data?.institutes || []).map((institute) => ({
+          id: institute._id,
+          name: institute.InstituteName,
+          location: institute.InstituteDescription || "-",
+        }));
+        if (fetchedInstitutes.length > 0) {
+          setInstitutes(fetchedInstitutes);
+        }
+      } catch (error) {
+        console.error("Failed to fetch institutes", error);
+      }
+    };
+
+    fetchInstitutes();
+  }, []);
 
   const openModal = (ins = null) => {
     if (ins) {
