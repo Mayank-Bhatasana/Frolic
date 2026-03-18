@@ -22,7 +22,10 @@ export default function Login() {
       localStorage.setItem("isLoggedIn", "true");
       navigate("/dashboard");
     } catch (err) {
-      setError(err?.response?.data?.message || "Login failed");
+      setError(
+        err?.response?.data?.message ||
+          "Login failed. Please check your credentials and try again."
+      );
     } finally {
       setLoading(false);
     }

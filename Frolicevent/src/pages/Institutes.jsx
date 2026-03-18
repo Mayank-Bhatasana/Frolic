@@ -19,6 +19,7 @@ export default function Institutes() {
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [editId, setEditId] = useState(null);
+  const [fetchError, setFetchError] = useState("");
 
   useEffect(() => {
     const fetchInstitutes = async () => {
@@ -32,7 +33,9 @@ export default function Institutes() {
         if (fetchedInstitutes.length > 0) {
           setInstitutes(fetchedInstitutes);
         }
+        setFetchError("");
       } catch (error) {
+        setFetchError("Could not load institutes from server. Showing local data.");
         console.error("Failed to fetch institutes", error);
       }
     };
@@ -93,6 +96,9 @@ export default function Institutes() {
               className="px-6 py-2 rounded-3xl bg-linear-to-r from-purple-400 to-pink-500 hover:from-purple-500 hover:to-pink-600 shadow-lg text-white font-bold transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
             />
           </div>
+          {fetchError && (
+            <p className="mb-4 text-sm text-red-600">{fetchError}</p>
+          )}
 
           {/* Table Glass Card */}
           <div className="bg-white/30 backdrop-blur-md rounded-2xl shadow-xl p-6 border border-white/20 transition-all duration-500 hover:shadow-2xl">
