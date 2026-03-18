@@ -1,10 +1,11 @@
-import { useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Navbar from "../components/layout/Navbar";
 import Sidebar from "../components/layout/Sidebar";
 import Table from "../components/common/Table";
 import Modal from "../components/common/Modal";
 import Input from "../components/common/Input";
 import Button from "../components/common/Button";
+import { getInstitutes } from "../api/services";
 
 export default function Institutes() {
   const nextId = useRef(3);
@@ -18,6 +19,27 @@ export default function Institutes() {
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [editId, setEditId] = useState(null);
+  const [fetchError, setFetchError] = useState("");
+
+  useEffect(() => {
+    const fetchInstitutes = async () => {
+      try {
+        const response = await getInstitutes();
+        const fetchedInstitutes = (response.data?.institutes || []).map((institute) => ({
+          id: institute._id,
+          name: institute.InstituteName,
+          location: institute.InstituteLocation || "-",
+        }));
+        setInstitutes(fetchedInstitutes);
+        setFetchError("");
+      } catch (error) {
+        setFetchError("Could not load institutes from server.");
+        console.error("Failed to fetch institutes", error);
+      }
+    };
+
+    fetchInstitutes();
+  }, []);
 
   const openModal = (ins = null) => {
     if (ins) {
@@ -72,6 +94,9 @@ export default function Institutes() {
               className="px-6 py-2 rounded-3xl bg-linear-to-r from-purple-400 to-pink-500 hover:from-purple-500 hover:to-pink-600 shadow-lg text-white font-bold transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
             />
           </div>
+          {fetchError && (
+            <p className="mb-4 text-sm text-red-600">{fetchError}</p>
+          )}
 
           {/* Table Glass Card */}
           <div className="bg-white/30 backdrop-blur-md rounded-2xl shadow-xl p-6 border border-white/20 transition-all duration-500 hover:shadow-2xl">
