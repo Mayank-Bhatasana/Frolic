@@ -28,7 +28,7 @@ export default function Institutes() {
         const fetchedInstitutes = (response.data?.institutes || []).map((institute) => ({
           id: institute._id,
           name: institute.InstituteName,
-          location: institute.InstituteDescription || "-",
+          location: institute.InstituteLocation || institute.InstituteDescription || "-",
         }));
         if (fetchedInstitutes.length > 0) {
           setInstitutes(fetchedInstitutes);
