@@ -38,7 +38,7 @@ app.use("/api/winners", eventWiseWinnerRoutes);
 
 const startServer = async () => {
     if (!mongoUri) {
-        console.error("Missing MongoDB connection string. Set MONGO_URL (or MONGO_URI) in .env");
+        console.error("Missing MongoDB connection string. Set MONGO_URL in .env (MONGO_URI is also supported).");
         process.exit(1);
     }
 

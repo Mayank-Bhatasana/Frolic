@@ -33,7 +33,7 @@ export default function Institutes() {
         setInstitutes(fetchedInstitutes);
         setFetchError("");
       } catch (error) {
-        setFetchError("Could not load institutes from server. Showing local data.");
+        setFetchError("Could not load institutes from server.");
         console.error("Failed to fetch institutes", error);
       }
     };
