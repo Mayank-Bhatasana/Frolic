@@ -28,11 +28,9 @@ export default function Institutes() {
         const fetchedInstitutes = (response.data?.institutes || []).map((institute) => ({
           id: institute._id,
           name: institute.InstituteName,
-          location: institute.InstituteLocation || institute.InstituteDescription || "-",
+          location: institute.InstituteLocation || "-",
         }));
-        if (fetchedInstitutes.length > 0) {
-          setInstitutes(fetchedInstitutes);
-        }
+        setInstitutes(fetchedInstitutes);
         setFetchError("");
       } catch (error) {
         setFetchError("Could not load institutes from server. Showing local data.");
