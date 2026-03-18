@@ -13,12 +13,6 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
-mongoose.connect(process.env.MONGO_URL).then(()=>{
-    console.log("DB Connected");
-}).catch((err)=>{
-    console.log(err);
-})
-
 const authRoutes=require("./routes/auth");
 const userRoutes=require("./routes/user");
 const instituteRoutes=require("./routes/institute");
@@ -37,6 +31,26 @@ app.use("/api/groups", groupRoutes);
 app.use("/api/participants", particpantRoutes);
 app.use("/api/winners", eventWiseWinnerRoutes);
 
-app.listen(process.env.PORT, ()=>{
-    console.log(`Server at port number ${process.env.PORT}`);
-})
+const startServer=async()=>{
+    if (!process.env.MONGO_URL) {
+        console.error("MONGO_URL is not defined in environment variables");
+        process.exit(1);
+    }
+
+    try {
+        await mongoose.connect(process.env.MONGO_URL, {
+            serverSelectionTimeoutMS: 5000
+        });
+        console.log("DB Connected");
+        
+        const port=process.env.PORT || 3000;
+        app.listen(port, ()=>{
+            console.log(`Server at port number ${port}`);
+        });
+    } catch (err) {
+        console.error("MongoDB connection error:", err.message);
+        process.exit(1);
+    }
+}
+
+startServer();
